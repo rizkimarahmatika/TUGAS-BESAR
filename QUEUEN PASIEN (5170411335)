@@ -1,0 +1,106 @@
+#include<iostream>
+#include<windows.h>
+using namespace std;
+
+typedef struct{
+    string nama[10];int no_antri[10];
+    int front=1;int rear=0;
+    }Queue_pasien;
+
+typedef struct{
+    string nama1,diagnosis;
+    int biaya=0;
+    }history;
+typedef history larik_history[15];
+Queue_pasien pasien;
+larik_history dokter;
+int nom=100; int m=0;
+
+bool fullQ(Queue_pasien X)
+{if(X.rear==10){return true;}else{return false;}}
+
+bool emptyQ(Queue_pasien X)
+{if(X.rear==0){return true;}else{return false;}}
+
+void Push_Q(Queue_pasien &X)
+{
+    cout<<"Selamat datang di antrian praktek dr. Bambang"<<endl;
+    nom++;X.rear++;
+    cout<<"Anda mendapat antrian nomor"<<nom<<endl;
+    X.no_antri[X.rear]=nom;
+    cout<<"Silahkan tulis nama anda:";cin>>X.nama[X.rear];
+    cout<<"Silahkan tunggu sebentar, anda harus menunggu"<<X.rear-1<<" orang"<<endl;
+}
+
+void Print_Q(Queue_pasien X)
+{
+    cout<<"Berikut adalah daftar antrian pasien di praktek dr. Bambang"<<endl;
+    cout<<" Posisi    No Antrian   Nama pasien"<<endl;
+    cout<<"-----------------------------------"<<endl;
+    for(int i=X.front;i<=X.rear;i++){
+    cout<<"  "<<i<<"    "<<X.no_antri[i]<<"    "<<X.nama[i]<<endl;}
+    cout<<"-----------------------------------"<<endl;
+    cout<<"Jumlah antrian = "<<X.rear<<" orang"<<endl;
+}
+
+void Pop_Q(Queue_pasien &X,larik_history &Y)
+{
+    cout<<"Pasien dengan nomor antrian "<<X.no_antri[X.front]<<" atas nama "<<X.nama[X.front]<<endl;
+    cout<<" silahkan masuk ke ruang periksa"<<endl;
+    //mencatat transaksi di ruang periksa
+    m++;
+    Y[m].nama1=X.nama[X.front];
+    cout<<"Masukkan diagnosisnya ";cin>>Y[m].diagnosis;
+    cout<<"Masukkan biayannya   : ";cin>>Y[m].biaya;
+    cout<<"Telah merekam medik"<<endl;
+    //lakukan pergeseran antrian selanjutnya
+    for(int i=1;i<=X.rear;i++)
+    {X.nama[i]=X.nama[i+1];X.no_antri[i]=X.no_antri[i+1];}
+    X.rear--;
+}
+
+void cetak_dokter(larik_history &Y)
+{
+    int jum;
+    cout<<"daftar pasien yang sudah diperiksa hari ini"<<endl;
+    cout<<"-------------------------------------------"<<endl;
+    cout<<"No  Nama   Diagnosa  Biaya"<<endl;
+    cout<<"-------------------------------------------"<<endl;
+    for(int i=1;i<m;i++)
+    {cout<<i<<" "<<Y[i].nama1<<"   "<<Y[i].diagnosis<<"  "<<Y[i].biaya<<endl;
+    jum=jum+Y[i].biaya;}
+    cout<<"----------------------------------------"<<endl;
+    cout<<"Total pendapatan = Rp "<<jum<<endl;
+}
+
+int main(){
+    int pilih=0;
+    do
+    {
+        system("cls");
+        cout<<"Pilih menu :"<<endl;
+        cout<<"1. Masuk antrian"<<endl;
+        cout<<"2. Cetak antrian"<<endl;
+        cout<<"3. Layanan antrian"<<endl;
+        cout<<"4. Keluar antrian"<<endl;
+        cout<<"5. Cetak history praktek dokter"<<endl;
+        cout<<"0. Selesai"<<endl;
+        cout<<"Pilih menu :";cin>>pilih;
+        switch(pilih)
+        {       case 1: {if (fullQ(pasien)){cout<<"Maaf ruang tunggu sdg penuh";}
+                        else if(nom==115){cout<<"nomor sudah habis"<<endl;}else{Push_Q(pasien);}
+                        break;}
+                case 2: {if (emptyQ(pasien)){cout<<"Antrian kosong";}
+                        else{Print_Q(pasien);}
+                        break;}
+                case 3: {if (emptyQ(pasien)){cout<<"Antrian kosong";}
+                        else{Pop_Q(pasien,dokter);}
+                        break;}
+                //case 4: {if (emtyQ(pasien)){cout<<"Antrian kosong";}else{Quit_Q(pasien);}break;}
+                case 5: {if (m==0){ cout<<"Belum ada pasien yang diperiksa"<<endl;}else{cetak_dokter(dokter);}break;}
+                case 0:{cout<<"Terimakasih"<<endl;}
+                default: cout<<"Salah pilih menu"<<endl;}
+                system("pause");
+    }
+    while(pilih!=0);
+}
